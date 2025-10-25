@@ -8,13 +8,13 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
-    // ✅ GET all products
+    //  GET all products
     public function index()
     {
         return response()->json(Product::all(), 200);
     }
 
-    // ✅ GET a single product
+    //  GET a single product
     public function show($id)
     {
         $product = Product::find($id);
@@ -22,16 +22,18 @@ class ProductController extends Controller
         return response()->json($product, 200);
     }
 
-    // ✅ CREATE product
+    //  CREATE product
     public function store(Request $request)
     {
         $validated = $request->validate([
+            
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'price' => 'required|numeric',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
         ]);
 
+        
         if ($request->hasFile('image')) {
             $validated['image'] = $request->file('image')->store('products', 'public');
         }
@@ -40,10 +42,11 @@ class ProductController extends Controller
         return response()->json($product, 201);
     }
 
-    // ✅ UPDATE product
+    //  UPDATE product
     public function update(Request $request, $id)
     {
         $product = Product::find($id);
+        
         if (!$product) return response()->json(['message' => 'Product not found'], 404);
 
         $validated = $request->validate([
@@ -54,6 +57,7 @@ class ProductController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
+            
             // delete old image if exists
             if ($product->image && Storage::disk('public')->exists($product->image)) {
                 Storage::disk('public')->delete($product->image);
@@ -65,7 +69,7 @@ class ProductController extends Controller
         return response()->json($product, 200);
     }
 
-    // ✅ DELETE product
+    //  DELETE product
     public function destroy($id)
     {
         $product = Product::find($id);
